@@ -1,13 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-
-export interface Blog {
-  id: number;
-  title: string;
-  content: string;
-  author: string;
-  published: boolean;
-  createdAt: Date;
-}
+import { CreateBlogDto, UpdateBlogDto } from './blogs.dto';
+import { Blog } from './blogs.interface';
 
 @Injectable()
 export class BlogsService {
@@ -42,7 +35,7 @@ export class BlogsService {
     return blog;
   }
 
-  create(blog: Omit<Blog, 'id' | 'createdAt'>): Blog {
+  create(blog: CreateBlogDto): Blog {
     const newBlog: Blog = {
       id: this.blogs.length + 1,
       createdAt: new Date(),
@@ -52,17 +45,20 @@ export class BlogsService {
     return newBlog;
   }
 
-  update(
-    id: number,
-    updatedBlog: Partial<Omit<Blog, 'id' | 'createdAt'>>,
-  ): Blog {
+  update(id: number, updatedBlog: UpdateBlogDto): Blog {
     const blog = this.findOne(id);
 
     if (!blog) {
       throw new NotFoundException('Blog not found');
     }
 
-    Object.assign(blog, updatedBlog);
+    // Only assign defined properties to avoid overwriting existing fields with undefined
+    Object.keys(updatedBlog).forEach((key) => {
+      if (updatedBlog[key] !== undefined) {
+        blog[key] = updatedBlog[key];
+      }
+    });
+
     return blog;
   }
 

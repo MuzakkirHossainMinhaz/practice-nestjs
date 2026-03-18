@@ -7,7 +7,9 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { type Blog, BlogsService } from './blogs.service';
+import { CreateBlogDto, UpdateBlogDto } from './blogs.dto';
+import { type Blog } from './blogs.interface';
+import { BlogsService } from './blogs.service';
 
 @Controller('blogs')
 export class BlogsController {
@@ -24,7 +26,7 @@ export class BlogsController {
   }
 
   @Post()
-  createBlog(@Body() blog: Omit<Blog, 'id' | 'createdAt'>): Blog {
+  createBlog(@Body() blog: CreateBlogDto): Blog {
     return this.blogsService.create(blog);
   }
 
@@ -37,7 +39,7 @@ export class BlogsController {
   @Patch(':id')
   updateBlog(
     @Param('id') id: string,
-    @Body() updatedBlog: Partial<Omit<Blog, 'id' | 'createdAt'>>,
+    @Body() updatedBlog: UpdateBlogDto,
   ): Blog {
     return this.blogsService.update(Number(id), updatedBlog);
   }
