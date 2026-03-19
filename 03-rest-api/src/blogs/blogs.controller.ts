@@ -6,7 +6,9 @@ import {
   Param,
   Patch,
   Post,
+  UsePipes,
 } from '@nestjs/common';
+import { UppercasePipe } from '../common/pipes/uppercase/uppercase.pipe';
 import { CreateBlogDto, UpdateBlogDto } from './blogs.dto';
 import { type Blog } from './blogs.interface';
 import { BlogsService } from './blogs.service';
@@ -26,6 +28,7 @@ export class BlogsController {
   }
 
   @Post()
+  @UsePipes(new UppercasePipe())
   createBlog(@Body() blog: CreateBlogDto): Blog {
     return this.blogsService.create(blog);
   }
@@ -37,6 +40,7 @@ export class BlogsController {
    */
 
   @Patch(':id')
+  @UsePipes(new UppercasePipe())
   updateBlog(
     @Param('id') id: string,
     @Body() updatedBlog: UpdateBlogDto,
